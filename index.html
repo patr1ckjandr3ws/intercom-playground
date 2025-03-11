@@ -1,24 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        // Intercom Messenger initialization
-        window.intercomSettings = {
-            app_id: "hd63k8p5"
-        };
-    </script>
-    <script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/t7bi71h4';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()</script>
+  <title>Intercom Playground</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .container {
+      max-width: 600px;
+      margin-top: 50px;
+    }
+    .email-form {
+      margin-top: 30px;
+      margin-bottom: 30px;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+    }
+  </style>
 </head>
 <body>
-    <button id="resetBtn">Reset</button>
-    <script>
-        // Reset button functionality
-        document.getElementById('resetBtn').addEventListener('click', function() {
-            Intercom('shutdown'); // Shut down the current session
-            Intercom('boot', { app_id: 't7bi71h4' }); // Reinitialize Intercom
-        });
-    </script>
+  <div class="container">
+    <h1>Intercom Playground</h1>
+    <p>This page has the Intercom messenger installed. You can click the icon in the bottom right to open it.</p>
+    
+    <div class="email-form">
+      <h3>Update Your Email</h3>
+      <p>Enter your email address to personalize your Intercom experience:</p>
+      <div class="input-group mb-3">
+        <input type="email" id="userEmail" class="form-control" placeholder="Enter your email">
+        <button class="btn btn-primary" type="button" id="updateEmail">Save</button>
+      </div>
+      <div id="statusMessage" class="mt-2"></div>
+    </div>
+  </div>
+
+  <script>
+    // Intercom setup
+    window.intercomSettings = {
+      api_base: "https://api-iam.intercom.io",
+      app_id: "zdokyqe3"
+    };
+  </script>
+  <script>
+    // Load Intercom
+    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/zdokyqe3';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+  </script>
+
+  <script>
+    // Email update functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const updateButton = document.getElementById('updateEmail');
+      const emailInput = document.getElementById('userEmail');
+      const statusMessage = document.getElementById('statusMessage');
+
+      // Check if Intercom is loaded
+      function isIntercomLoaded() {
+        return typeof window.Intercom === 'function';
+      }
+
+      updateButton.addEventListener('click', function() {
+        const email = emailInput.value.trim();
+        
+        // Basic email validation
+        if (!email || !email.includes('@') || email.indexOf('@') === email.length - 1) {
+          statusMessage.innerHTML = '<div class="alert alert-danger">Please enter a valid email address</div>';
+          return;
+        }
+        
+        if (isIntercomLoaded()) {
+          // Update Intercom with the email
+          window.Intercom('update', {
+            email: email
+          });
+          
+          // Show success message
+          statusMessage.innerHTML = '<div class="alert alert-success">Email updated successfully!</div>';
+          
+          // Optional: You can also show the messenger
+          // window.Intercom('show');
+        } else {
+          statusMessage.innerHTML = '<div class="alert alert-warning">Intercom hasn\'t loaded yet. Please try again.</div>';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
