@@ -12,6 +12,14 @@
       background-color: white;
     }
   </style>
+  
+  <!-- HubSpot Settings - MUST be before the HubSpot script -->
+  <script>
+    window.hsConversationsSettings = {
+      loadImmediately: true,
+      hubPortalId: 146126437
+    }
+  </script>
 </head>
 <body>
   <!-- Intercom Script -->
@@ -32,10 +40,5 @@
   <!-- Start of HubSpot Embed Code -->
   <script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/146126437.js"></script>
   <!-- End of HubSpot Embed Code -->
-  <script>
-    window.hsConversationsSettings = {
-      loadImmediately: true,
-    }
-  </script>
 </body>
 </html>
