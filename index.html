@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HubSpot Widget Test</title>
+  <title>Chat Widgets</title>
   <style>
     body, html {
       height: 100%;
@@ -12,10 +12,35 @@
       background-color: white;
     }
   </style>
+  
+  <!-- HubSpot Settings - Must be before the HubSpot script -->
+  <script>
+    window.hsConversationsSettings = {
+      loadImmediately: false
+    };
+  </script>
 </head>
 <body>
-  <!-- Start of HubSpot Embed Code -->
+  <!-- Intercom Script with handoff function -->
+  <script>
+    window.intercomSettings = {
+      api_base: "https://api-iam.intercom.io",
+      app_id: "q44qconr",
+      handoff_with_javascript: function() {
+        // Load HubSpot widget when handoff is triggered
+        if (window.HubSpotConversations) {
+          window.HubSpotConversations.widget.load({ widgetOpen: true });
+        }
+      }
+    };
+  </script>
+  
+  <!-- Intercom Widget Code -->
+  <script>
+    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/q44qconr';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+  </script>
+  
+  <!-- HubSpot Widget Code -->
   <script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/146126437.js"></script>
-  <!-- End of HubSpot Embed Code -->
 </body>
 </html>
