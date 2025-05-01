@@ -3,15 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat Widgets</title>
-  <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background-color: white;
-    }
-  </style>
+  <title>Generic Workspace Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- HubSpot Settings - Must be before the HubSpot script -->
   <script>
@@ -19,8 +12,41 @@
       loadImmediately: false
     };
   </script>
+  
+  <!-- Cookie Reset Script -->
+  <script>
+    function reset() {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        // Set the cookie's expiration date to a past date to delete it
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+      }
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.location.reload();
+      if (window.Intercom) {
+        window.Intercom('shutdown');
+      }
+    }
+  </script>
 </head>
-<body>
+<body class="p-6 flex flex-col flex-1 items-center justify-center min-h-screen bg-cover" style="background-image: url('https://downloads.intercomcdn.com/i/o/1051523575/8c16c6bb97ae791131ead20c/blur.jpg')">
+  
+  <!-- Header and Avatar Section -->
+  <div class="flex flex-col space-y-6 items-center mb-10">
+    <h1 class="text-3xl font-bold text-white mb-8">Generic Workspace Demo</h1>
+    
+    <div class="flex flex-col space-y-2 items-center">
+      <div>
+        <img src="https://static.intercomassets.com/assets/default-avatars/fin/128-6a5eabbb84cc2b038b2afc6698ca0a974faf7adc9ea9f0fb3c3e78ac12543bc5.png" height="50" width="50">
+      </div>
+      <button class="bg-black text-white p-2 m-2 rounded hover:bg-opacity-75" onclick="reset()">Reset</button>
+    </div>
+  </div>
+  
   <!-- Intercom Script with handoff function -->
   <script>
     window.intercomSettings = {
