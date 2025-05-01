@@ -1,1 +1,1 @@
-# intercom-playground
+# generic-workspace-demo
