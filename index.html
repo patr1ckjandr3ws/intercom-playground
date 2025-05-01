@@ -12,14 +12,6 @@
       background-color: white;
     }
   </style>
-  
-  <!-- HubSpot Settings to prevent automatic loading -->
-  <script>
-    window.hsConversationsSettings = {
-      loadImmediately: false,
-      hubPortalId: 146126437
-    }
-  </script>
 </head>
 <body>
   <!-- Intercom Script -->
@@ -40,5 +32,10 @@
   <!-- Start of HubSpot Embed Code -->
   <script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/146126437.js"></script>
   <!-- End of HubSpot Embed Code -->
+  <script>
+    window.hsConversationsSettings = {
+      loadImmediately: false,
+    }
+  </script>
 </body>
 </html>
