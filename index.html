@@ -26,10 +26,15 @@
     window.intercomSettings = {
       api_base: "https://api-iam.intercom.io",
       app_id: "q44qconr",
-      handoff_with_javascript: function() {
-        // Load HubSpot widget when handoff is triggered
+      handoff_with_javascript: () => {
+        // Load and open HubSpot widget when handoff is triggered
         if (window.HubSpotConversations) {
-          window.HubSpotConversations.widget.load({ widgetOpen: true });
+          // First load the widget
+          window.HubSpotConversations.widget.load();
+          // Then explicitly open it after a short delay to ensure it's loaded
+          setTimeout(() => {
+            window.HubSpotConversations.widget.open();
+          }, 100);
         }
       }
     };
