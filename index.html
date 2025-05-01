@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Intercom Integration</title>
+  <title>Chat Integration Test</title>
   <style>
     body, html {
       height: 100%;
@@ -11,34 +11,109 @@
       padding: 0;
       background-color: white;
     }
+    .debug-panel {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px;
+      font-family: monospace;
+      z-index: 9999;
+      max-width: 80%;
+    }
+    .test-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px;
+      background: #0072ef;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
   </style>
   
-  <!-- HubSpot Settings - MUST be before the HubSpot script -->
-  <script>
+  <!-- HubSpot Settings - MUST be before the script -->
+  <script type="text/javascript">
     window.hsConversationsSettings = {
       loadImmediately: true,
-      hubPortalId: 146126437
-    }
+      inlineEmbedSelector: '#hubspot-messages-iframe-container'
+    };
   </script>
 </head>
 <body>
+  <!-- Debug panel to see what's happening -->
+  <div class="debug-panel" id="debug">Loading widgets...</div>
+  
+  <!-- Test button to manually trigger HubSpot -->
+  <button class="test-button" id="load-hubspot">Load HubSpot Widget</button>
+  
+  <!-- Container for HubSpot inline embed -->
+  <div id="hubspot-messages-iframe-container" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px;"></div>
+  
   <!-- Intercom Script -->
   <script>
     window.intercomSettings = {
       api_base: "https://api-iam.intercom.io",
       app_id: "q44qconr",
-      handoff_with_javascript: () => {
-        window.HubSpotConversations.widget.load({ widgetOpen: true });
+      handoff_with_javascript: function() {
+        if (window.HubSpotConversations) {
+          document.getElementById('debug').innerHTML += "<br>Handoff triggered";
+          window.HubSpotConversations.widget.load({ widgetOpen: true });
+        } else {
+          document.getElementById('debug').innerHTML += "<br>ERROR: HubSpot not available for handoff";
+        }
       }
     };
   </script>
   <script>
-    // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/q44qconr'
+    // Intercom widget
     (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/q44qconr';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+    
+    // Update debug when Intercom loads
+    document.addEventListener('intercom:ready', function() {
+      document.getElementById('debug').innerHTML += "<br>Intercom ready";
+    });
   </script>
   
-  <!-- Start of HubSpot Embed Code -->
+  <!-- HubSpot Embed Code -->
   <script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/146126437.js"></script>
-  <!-- End of HubSpot Embed Code -->
+  
+  <script>
+    // Debug and manual testing
+    document.addEventListener('DOMContentLoaded', function() {
+      const debug = document.getElementById('debug');
+      
+      // Check if HubSpot loaded
+      const checkHubSpot = setInterval(function() {
+        if (window.HubSpotConversations) {
+          debug.innerHTML += "<br>HubSpot script loaded";
+          clearInterval(checkHubSpot);
+        }
+      }, 1000);
+      
+      // Manual trigger for HubSpot
+      document.getElementById('load-hubspot').addEventListener('click', function() {
+        debug.innerHTML += "<br>Manual load clicked";
+        if (window.HubSpotConversations) {
+          window.HubSpotConversations.widget.load({ widgetOpen: true });
+          debug.innerHTML += "<br>HubSpot widget loaded manually";
+        } else {
+          debug.innerHTML += "<br>ERROR: HubSpot not available yet";
+          
+          // Try loading the script again
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.async = true;
+          script.defer = true;
+          script.src = '//js-eu1.hs-scripts.com/146126437.js';
+          document.body.appendChild(script);
+          
+          debug.innerHTML += "<br>Attempted to reload HubSpot script";
+        }
+      });
+    });
+  </script>
 </body>
 </html>
