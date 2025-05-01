@@ -15,21 +15,15 @@
     .bg-container {
       position: relative;
       min-height: 100vh;
-      background-color: #f5f1e6; /* Fallback background color matching the image base */
+      background-color: #e9dfd1; /* Light beige fallback */
+      background-image: url("/assets/geometric-abstract.png");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: hidden;
-    }
-    
-    .bg-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
     }
     
     .blur-overlay {
@@ -57,29 +51,76 @@
       font-size: 3rem;
       margin-bottom: 1rem;
     }
+    
+    #debug-info {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      z-index: 9999;
+      max-width: 80%;
+    }
   </style>
 </head>
 <body>
   <div class="bg-container">
-    <img src="./assets/geometric-abstract.png" alt="Abstract geometric shapes in orange, yellow, teal and navy" class="bg-image">
     <div class="blur-overlay"></div>
     <div class="content">
       <h1>Welcome</h1>
       <p>Click the icon in the bottom right to open the Intercom Messenger.</p>
     </div>
   </div>
+  
+  <div id="debug-info"></div>
 
   <!-- Intercom Script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/intercom-messenger-js-sdk/0.1.0/messenger.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Debug information
+      const debugInfo = document.getElementById('debug-info');
+      debugInfo.innerHTML = 'Debug Info:<br>';
+      debugInfo.innerHTML += 'Page URL: ' + window.location.href + '<br>';
+      debugInfo.innerHTML += 'Image path: /assets/geometric-abstract.png<br>';
+      
+      // Test if background image loaded
+      const img = new Image();
+      img.onload = function() {
+        debugInfo.innerHTML += 'Background image loaded successfully!<br>';
+        debugInfo.style.backgroundColor = 'rgba(0, 128, 0, 0.7)';
+      };
+      img.onerror = function() {
+        debugInfo.innerHTML += 'Failed to load background image!<br>';
+        // Try alternative paths
+        debugInfo.innerHTML += 'Trying alternative paths...<br>';
+        testImagePath('./assets/geometric-abstract.png');
+        testImagePath('assets/geometric-abstract.png');
+        testImagePath('../assets/geometric-abstract.png');
+        testImagePath('/yourrepository/assets/geometric-abstract.png');
+      };
+      img.src = '/assets/geometric-abstract.png';
+      
+      function testImagePath(path) {
+        const testImg = new Image();
+        testImg.onload = function() {
+          debugInfo.innerHTML += 'Success with: ' + path + '<br>';
+          document.querySelector('.bg-container').style.backgroundImage = 'url("' + path + '")';
+        };
+        testImg.onerror = function() {
+          debugInfo.innerHTML += 'Failed with: ' + path + '<br>';
+        };
+        testImg.src = path;
+      }
+      
       // Initialize Intercom with the new app_id
       if (typeof Intercom === 'function') {
         Intercom({
           app_id: 'q44qconr'
         });
       } else {
-        console.error('Intercom SDK not loaded properly');
+        debugInfo.innerHTML += 'Intercom SDK not loaded properly<br>';
       }
     });
   </script>
