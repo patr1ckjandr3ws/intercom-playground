@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat Integration Test</title>
+  <title>HubSpot Widget Test</title>
   <style>
     body, html {
       height: 100%;
@@ -11,154 +11,11 @@
       padding: 0;
       background-color: white;
     }
-    .debug-panel {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 10px;
-      font-family: monospace;
-      z-index: 9999;
-      max-width: 80%;
-      overflow-y: auto;
-      max-height: 50%;
-    }
-    .test-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      padding: 10px;
-      background: #0072ef;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
-  <!-- Debug panel to see what's happening -->
-  <div class="debug-panel" id="debug">Loading widgets...</div>
-  
-  <!-- Test button to manually trigger HubSpot -->
-  <button class="test-button" id="load-hubspot">Load HubSpot Widget</button>
-  
-  <!-- Intercom Script -->
-  <script>
-    window.intercomSettings = {
-      api_base: "https://api-iam.intercom.io",
-      app_id: "q44qconr",
-      handoff_with_javascript: function() {
-        document.getElementById('debug').innerHTML += "<br>Handoff triggered";
-        // Try to open HubSpot
-        try {
-          if (window.HubSpotConversations) {
-            window.HubSpotConversations.widget.load({ widgetOpen: true });
-            document.getElementById('debug').innerHTML += "<br>HubSpot opened via API";
-          } else {
-            document.getElementById('debug').innerHTML += "<br>HubSpotConversations not found";
-          }
-        } catch (e) {
-          document.getElementById('debug').innerHTML += "<br>Error: " + e.message;
-        }
-      }
-    };
-  </script>
-  <script>
-    // Intercom widget
-    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/q44qconr';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
-  </script>
-  
-  <!-- HubSpot Chat Embed (updated version) -->
   <!-- Start of HubSpot Embed Code -->
   <script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/146126437.js"></script>
   <!-- End of HubSpot Embed Code -->
-  
-  <script>
-    // Debug and manual testing
-    document.addEventListener('DOMContentLoaded', function() {
-      const debug = document.getElementById('debug');
-      debug.innerHTML += "<br>DOM loaded";
-      
-      // Poll for HubSpot availability
-      let hubspotCheck = 0;
-      const maxChecks = 10;
-      
-      const checkHubSpot = setInterval(function() {
-        hubspotCheck++;
-        
-        // Check if we've tried too many times
-        if (hubspotCheck > maxChecks) {
-          debug.innerHTML += "<br>Gave up waiting for HubSpot after " + maxChecks + " attempts";
-          clearInterval(checkHubSpot);
-          return;
-        }
-        
-        debug.innerHTML += "<br>Checking for HubSpot (" + hubspotCheck + "/" + maxChecks + ")";
-        
-        // Try different ways to detect HubSpot
-        if (window.HubSpotConversations) {
-          debug.innerHTML += "<br>Found HubSpotConversations!";
-          clearInterval(checkHubSpot);
-        } else if (window.hsConversationsOnReady) {
-          debug.innerHTML += "<br>Found hsConversationsOnReady!";
-          clearInterval(checkHubSpot);
-        } else if (document.querySelector('iframe[data-test-id="ChatWidgetWindow-iframe"]')) {
-          debug.innerHTML += "<br>Found HubSpot iframe!";
-          clearInterval(checkHubSpot);
-        }
-      }, 2000);
-      
-      // Try using standard HubSpot methods
-      window.hsConversationsOnReady = [
-        function() {
-          debug.innerHTML += "<br>HubSpot conversations ready callback fired!";
-        }
-      ];
-      
-      // Manual trigger for HubSpot
-      document.getElementById('load-hubspot').addEventListener('click', function() {
-        debug.innerHTML += "<br>Manual load button clicked";
-        
-        // Let's try different methods to load HubSpot
-        try {
-          // Method 1: Use HubSpotConversations API if available
-          if (window.HubSpotConversations) {
-            window.HubSpotConversations.widget.load({ widgetOpen: true });
-            debug.innerHTML += "<br>Method 1: Called HubSpotConversations.widget.load()";
-          } 
-          // Method 2: Use regular script approach
-          else {
-            debug.innerHTML += "<br>Method 2: Attempting to reload HubSpot script";
-            
-            // Show current scripts
-            const scripts = document.querySelectorAll('script');
-            debug.innerHTML += "<br>Current scripts: " + scripts.length;
-            
-            // Add the script again
-            const newScript = document.createElement('script');
-            newScript.type = 'text/javascript';
-            newScript.id = 'hs-script-loader-2';
-            newScript.async = true;
-            newScript.defer = true;
-            newScript.src = 'https://js.hs-scripts.com/146126437.js'; // Notice the https:// prefix
-            document.body.appendChild(newScript);
-            
-            debug.innerHTML += "<br>Added new script with full HTTPS URL";
-            
-            newScript.onload = function() {
-              debug.innerHTML += "<br>New script loaded successfully";
-            };
-            
-            newScript.onerror = function(e) {
-              debug.innerHTML += "<br>Error loading new script: " + e.type;
-            };
-          }
-        } catch (e) {
-          debug.innerHTML += "<br>Error: " + e.message;
-        }
-      });
-    });
-  </script>
 </body>
 </html>
